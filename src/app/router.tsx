@@ -1,6 +1,7 @@
+import DashboardPage from "@/pages/dashboard/DashBoardPage"
 import LoginPage from "@/pages/login/LoginPage"
 import SignupPage from "@/pages/signup/SignupPage"
-import AuthGuard from "@/shared/lib/AuthGuard"
+// import AuthGuard from "@/shared/lib/AuthGuard"
 import RootRedirect from "@/shared/lib/RootRedirect"
 import { createBrowserRouter } from "react-router"
 
@@ -21,11 +22,11 @@ export const router = createBrowserRouter(
                     element: <SignupPage />,
                 },
                 {
-                    element: <AuthGuard />,
+                    // element: <AuthGuard />,
                     children: [
                         {
-                            path: "/home",
-                            // element: <HomePage />,
+                            path: "/dashboard",
+                            element: <DashboardPage />,
                         },
                     ],
                 },
