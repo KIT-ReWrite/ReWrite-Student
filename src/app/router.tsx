@@ -6,6 +6,8 @@ import ClassesPage from "@/pages/classes/ClassesPage"
 import DashboardPage from "@/pages/dashboard/DashBoardPage"
 import LoginPage from "@/pages/login/LoginPage"
 import SignupPage from "@/pages/signup/SignupPage"
+import FeedbackPage from "@/pages/submissions/FeedbackPage"
+import ResultPage from "@/pages/submissions/ResultPage"
 // import AuthGuard from "@/shared/lib/AuthGuard"
 import RootRedirect from "@/shared/lib/RootRedirect"
 import { createBrowserRouter } from "react-router"
@@ -52,6 +54,14 @@ export const router = createBrowserRouter(
                         {
                             path: "/analysis",
                             element: <AnalysisPage />,
+                        },
+                        {
+                            path: "/submissions/:id",
+                            element: <ResultPage />,
+                        },
+                        {
+                            path: "/submissions/:id/feedback",
+                            element: <FeedbackPage />,
                         },
                     ],
                 },
