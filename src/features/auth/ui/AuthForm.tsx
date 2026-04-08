@@ -21,7 +21,12 @@ const AuthForm = ({ type }: IAuthProp) => {
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault()
-        navigate("/teacher")
+        navigate("/dashboard")
+    }
+
+    const handleSignup = (e: React.FormEvent) => {
+        e.preventDefault()
+        navigate("/login")
     }
 
     return (
@@ -44,7 +49,7 @@ const AuthForm = ({ type }: IAuthProp) => {
                 <p className="text-text-secondary mt-2">{type == "login" ? "로그인" : "회원가입"}</p>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={type == "login" ? handleLogin : handleSignup} className="space-y-4">
                 {type == "signup" && (
                     <>
                         <div>
