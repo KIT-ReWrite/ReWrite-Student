@@ -1,3 +1,4 @@
+import AnalysisPage from "@/pages/analysis/AnalysisPage"
 import AssignmentDetailPage from "@/pages/assignments/AssignmentDetailPage"
 import AssignmentsPage from "@/pages/assignments/AssignmentsPage"
 import ClassDetailPage from "@/pages/classes/ClassDetailPage"
@@ -47,6 +48,10 @@ export const router = createBrowserRouter(
                         {
                             path: "/assignments/:id",
                             element: <AssignmentDetailPage />,
+                        },
+                        {
+                            path: "/analysis",
+                            element: <AnalysisPage />,
                         },
                     ],
                 },
