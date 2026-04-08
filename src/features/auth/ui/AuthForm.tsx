@@ -15,7 +15,7 @@ const AuthForm = ({ type }: IAuthProp) => {
 
     const [username, setUserName] = useState("")
     const [school, setSchool] = useState("")
-    const [subject, setSubject] = useState("")
+    const [studentNumber, setStudentNumber] = useState("")
     const [userId, setUserId] = useState("")
     const [password, setPassword] = useState("")
 
@@ -87,14 +87,14 @@ const AuthForm = ({ type }: IAuthProp) => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-text-primary mb-1">담당과목</label>
+                            <label className="block text-sm font-medium text-text-primary mb-1">학번</label>
                             <div className="relative">
                                 <input
                                     type="text"
                                     className="notion-input p-4"
-                                    placeholder="담당과목을 입력하세요"
-                                    value={subject}
-                                    onChange={(e) => setSubject(e.target.value)}
+                                    placeholder="학번을 입력하세요"
+                                    value={studentNumber}
+                                    onChange={(e) => setStudentNumber(e.target.value)}
                                     required
                                 />
                             </div>
