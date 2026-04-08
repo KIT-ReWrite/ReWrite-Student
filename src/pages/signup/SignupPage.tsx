@@ -5,7 +5,7 @@ import AuthForm from "@/features/auth/ui/AuthForm"
  */
 const SignupPage = () => {
     return (
-        <div className="h-screen flex flex-col items-center justify-center">
+        <div className="h-screen flex flex-col items-center justify-center p-4 py-12">
             <AuthForm type="signup" />
         </div>
     )
