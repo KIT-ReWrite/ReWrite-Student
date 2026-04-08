@@ -20,11 +20,7 @@ function DashboardPage() {
     ]
 
     return (
-        <PageLayout
-            role="student"
-            title={`안녕하세요, ${currentUser.name}님! 👋`}
-            description="오늘의 학습 현황을 확인해보세요."
-        >
+        <PageLayout title={`안녕하세요, ${currentUser.name}님! 👋`} description="오늘의 학습 현황을 확인해보세요.">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
                     <DueAssignmentsSection assignments={dueAssignments} />
