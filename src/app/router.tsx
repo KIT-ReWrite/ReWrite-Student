@@ -5,6 +5,7 @@ import ClassDetailPage from "@/pages/classes/ClassDetailPage"
 import ClassesPage from "@/pages/classes/ClassesPage"
 import DashboardPage from "@/pages/dashboard/DashBoardPage"
 import LoginPage from "@/pages/login/LoginPage"
+import MyPage from "@/pages/mypage/MyPage"
 import SignupPage from "@/pages/signup/SignupPage"
 import FeedbackPage from "@/pages/submissions/FeedbackPage"
 import ResultPage from "@/pages/submissions/ResultPage"
@@ -35,6 +36,10 @@ export const router = createBrowserRouter(
                         {
                             path: "/dashboard",
                             element: <DashboardPage />,
+                        },
+                        {
+                            path: "/mypage",
+                            element: <MyPage />,
                         },
                         {
                             path: "/classes",
