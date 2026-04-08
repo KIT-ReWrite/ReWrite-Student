@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { BookOpen, Home, Book, FileText, BarChart2, Calendar, Users, Menu, X, LogOut } from "lucide-react"
+import { BookOpen, Home, Book, FileText, BarChart2, Users, Menu, X, LogOut } from "lucide-react"
 import { currentUser } from "../model/mockData"
 
 export function Navbar() {
@@ -29,11 +29,6 @@ export function Navbar() {
             label: "학습 분석",
             icon: BarChart2,
         },
-        {
-            path: "/calendar",
-            label: "캘린더",
-            icon: Calendar,
-        },
     ]
 
     const isActive = (path: string) => {
@@ -50,13 +45,11 @@ export function Navbar() {
     return (
         <nav className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-border z-50 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
-                {/* Logo */}
                 <Link to="/dashboard" className="flex items-center gap-2 text-primary font-bold text-xl">
                     <BookOpen className="text-primary" />
                     <span>Re:Write</span>
                 </Link>
 
-                {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-1">
                     {links.map((link) => {
                         const Icon = link.icon
@@ -74,7 +67,6 @@ export function Navbar() {
                     })}
                 </div>
 
-                {/* User Profile & Mobile Toggle */}
                 <div className="flex items-center gap-4">
                     <Link
                         to="/mypage"
