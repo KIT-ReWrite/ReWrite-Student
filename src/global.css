@@ -1,29 +1,61 @@
+/* index.css */
+
 @import "tailwindcss";
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
 
-/**
- * 프로젝트 기본 스타일 초기화
- */
+@layer base {
+    body {
+        @apply bg-background text-text-primary font-sans antialiased;
+    }
+}
+
+/* ================== THEME (config → css 변환) ================== */
+@theme {
+    --color-primary: #4ecdc4;
+    --color-primary-hover: #3db8b0;
+    --color-primary-light: #e8f8f7;
+
+    --color-secondary: #87ceeb;
+    --color-secondary-light: #ebf7fc;
+
+    --color-accent: #ff6b6b;
+    --color-success: #6bcb77;
+    --color-warning: #ffd93d;
+
+    --color-background: #f8fffe;
+    --color-card: #ffffff;
+
+    --color-text-primary: #2d3436;
+    --color-text-secondary: #636e72;
+
+    --color-border: #e8f4f2;
+
+    --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
+    --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.03);
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.04);
+
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+}
+
+/* ================== BASE ================== */
 @layer base {
     html,
     #root {
         @apply w-full h-full;
-        font-family:
-            "Pretendard",
-            -apple-system,
-            BlinkMacSystemFont,
-            system-ui,
-            sans-serif;
+        font-family: var(--font-sans);
     }
 
     body {
         @apply w-full h-full min-w-[360px];
-        font-family:
-            "Pretendard",
-            -apple-system,
-            BlinkMacSystemFont,
-            system-ui,
-            sans-serif;
+        font-family: var(--font-sans);
+
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.7;
+        color: var(--color-text-primary);
+        background-color: var(--color-background);
     }
 
     h1 {
@@ -51,12 +83,6 @@
         font-size: 1.125rem;
     }
 
-    body {
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.7;
-    }
-
     button {
         cursor: pointer;
     }
@@ -64,19 +90,73 @@
     button:disabled {
         cursor: not-allowed;
     }
-
-    @media (max-width: 1280px) {
-        .bg-layout-md-none {
-            background-image: none !important;
-        }
-
-        .bg-layout-md-none::after {
-            display: none !important;
-        }
-    }
 }
 
+/* ================== UTILITIES (Tailwind class 대체) ================== */
 @layer utilities {
+    /* ===== colors ===== */
+    .bg-primary {
+        background-color: var(--color-primary);
+    }
+    .bg-primary-hover {
+        background-color: var(--color-primary-hover);
+    }
+    .bg-primary-light {
+        background-color: var(--color-primary-light);
+    }
+
+    .bg-secondary {
+        background-color: var(--color-secondary);
+    }
+    .bg-secondary-light {
+        background-color: var(--color-secondary-light);
+    }
+
+    .bg-accent {
+        background-color: var(--color-accent);
+    }
+    .bg-success {
+        background-color: var(--color-success);
+    }
+    .bg-warning {
+        background-color: var(--color-warning);
+    }
+
+    .bg-background {
+        background-color: var(--color-background);
+    }
+    .bg-card {
+        background-color: var(--color-card);
+    }
+
+    .text-primary {
+        color: var(--color-text-primary);
+    }
+    .text-secondary {
+        color: var(--color-text-secondary);
+    }
+
+    .border-base {
+        border-color: var(--color-border);
+    }
+
+    /* ===== shadow ===== */
+    .shadow-soft {
+        box-shadow: var(--shadow-soft);
+    }
+    .shadow-card {
+        box-shadow: var(--shadow-card);
+    }
+
+    /* ===== radius ===== */
+    .rounded-xl {
+        border-radius: var(--radius-xl);
+    }
+    .rounded-2xl {
+        border-radius: var(--radius-2xl);
+    }
+
+    /* ===== scrollbar ===== */
     .scrollbar-track-transparent {
         scrollbar-color: #bdbdbd transparent;
     }
@@ -103,94 +183,11 @@
     .no-scrollbar::-webkit-scrollbar {
         display: none;
     }
-}
 
-@theme {
-    /* ===== Primary ===== */
-    --primary-blue: #001871;
-    --primary-blue-pale: #e1ecff;
-    --primary-blue-gray: #808bb8;
-    --primary-blue-shadow: #99a3c6;
-    --primary-blue-light: #33468d;
-    --primary-blue-dark: #001256;
-
-    /* ===== Secondary ===== */
-    --secondary-sky: #b8e8fe;
-    --secondary-sky-pale: #d4f1fe;
-    --secondary-sky-light: #bfeafe;
-    --secondary-sky-dark: #94dbfb;
-
-    /* ===== Accent ===== */
-    --accent-purple: #d7c1f2;
-
-    /* ===== Point ===== */
-    --point-yellow: #fff59d;
-
-    /* ===== Background ===== */
-    --background-white: #fefefe;
-
-    /* ===== Grayscale ===== */
-    --grayscale-black: #222222;
-    --grayscale-dark-gray: #666666;
-    --grayscale-medium-gray: #999999;
-    --grayscale-light-gray: #cccccc;
-    --grayscale-border: #dedede;
-    --grayscale-bg-gray: #f3f3f3;
-
-    /* ===== System ===== */
-    --system-error: #f94848;
-    --system-warning: #ffbf2b;
-    --system-success: #4caf50;
-    --system-info: #0091ea;
-
-    /* ===== Label ===== */
-    --text-label-small: 14px;
-    --text-label-small--line-height: 20px;
-    --text-label-small--font-weight: 500;
-
-    --text-label-medium: 16px;
-    --text-label-medium--line-height: 24px;
-    --text-label-medium--font-weight: 500;
-
-    --text-label-large: 18px;
-    --text-label-large--line-height: 24px;
-    --text-label-large--font-weight: 500;
-
-    /* ===== Body ===== */
-    --text-body-tiny: 14px;
-    --text-body-tiny--line-height: 20px;
-    --text-body-tiny--font-weight: 400;
-
-    --text-body-small: 16px;
-    --text-body-small--line-height: 24px;
-    --text-body-small--font-weight: 400;
-
-    --text-body-medium: 18px;
-    --text-body-medium--line-height: 24px;
-    --text-body-medium--font-weight: 400;
-
-    --text-body-large: 20px;
-    --text-body-large--line-height: 32px;
-    --text-body-large--font-weight: 400;
-
-    /* ===== Title ===== */
-    --text-title-tiny: 16px;
-    --text-title-tiny--line-height: 24px;
-    --text-title-tiny--font-weight: 600;
-    --text-title-tiny--letter-spacing: -0.025em;
-
-    --text-title-small: 24px;
-    --text-title-small--line-height: 32px;
-    --text-title-small--font-weight: 600;
-    --text-title-small--letter-spacing: -0.025em;
-
-    --text-title-medium: 36px;
-    --text-title-medium--line-height: 48px;
-    --text-title-medium--font-weight: 600;
-    --text-title-medium--letter-spacing: -0.025em;
-
-    --text-title-large: 48px;
-    --text-title-large--line-height: 64px;
-    --text-title-large--font-weight: 600;
-    --text-title-large--letter-spacing: -0.025em;
+    .notion-input {
+        @apply w-full py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white;
+    }
+    .notion-textarea {
+        @apply w-full py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white resize-y min-h-[120px];
+    }
 }
