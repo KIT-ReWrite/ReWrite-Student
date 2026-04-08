@@ -1,10 +1,49 @@
 import { defineConfig } from "vite"
 import path from "path"
 import react from "@vitejs/plugin-react-swc"
+import { VitePWA } from "vite-plugin-pwa"
 
-// https://vite.dev/config/
 export default defineConfig({
-    plugins: [react()],
+    plugins: [
+        react(),
+        VitePWA({
+            disable: false,
+            registerType: "autoUpdate",
+
+            devOptions: {
+                enabled: true,
+            },
+
+            includeAssets: [
+                "icons/favicon.ico",
+                "icons/icon-192.png",
+                "icons/icon-512.png",
+                "splash/apple-touch-icon.png",
+            ],
+
+            manifest: {
+                name: "Re:Write",
+                short_name: "Re:Write",
+                start_url: "/",
+                theme_color: "#000000",
+                background_color: "#ffffff",
+                display: "standalone",
+                icons: [
+                    {
+                        src: "icons/icon-192.png",
+                        sizes: "192x192",
+                        type: "image/png",
+                    },
+                    {
+                        src: "icons/icon-512.png",
+                        sizes: "512x512",
+                        type: "image/png",
+                        purpose: "maskable",
+                    },
+                ],
+            },
+        }),
+    ],
 
     resolve: {
         alias: {
