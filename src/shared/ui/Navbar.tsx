@@ -2,10 +2,8 @@ import { useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { BookOpen, Home, Book, FileText, BarChart2, Calendar, Users, Menu, X, LogOut } from "lucide-react"
 import { currentUser } from "../model/mockData"
-interface NavbarProps {
-    role: "student" | "teacher"
-}
-export function Navbar({ role }: NavbarProps) {
+
+export function Navbar() {
     const location = useLocation()
     const navigate = useNavigate()
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -115,7 +113,7 @@ export function Navbar({ role }: NavbarProps) {
 
                         <div>
                             <div className="font-medium">{user.name}</div>
-                            <div className="text-xs text-text-secondary">{role === "student" ? "학생" : "선생님"}</div>
+                            <div className="text-xs text-text-secondary">학생</div>
                         </div>
                     </div>
 
