@@ -1,120 +1,162 @@
 import axios from "axios"
 import type { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "axios"
 
+// 재시도 여부를 추적하기 위한 커스텀 필드
+interface RetryAxiosRequestConfig extends InternalAxiosRequestConfig {
+    _retry?: boolean
+}
+
 const apiInstance = axios.create({
-    baseURL: `${import.meta.env.VITE_API_BASE_URL}`,
+    baseURL: import.meta.env.VITE_API_BASE_URL,
     timeout: 10000,
     headers: {
         "Content-Type": "application/json",
     },
 })
 
-/**
- * @description 요청 시 Authorization 헤더에 accessToken 자동 주입
- */
-apiInstance.interceptors.request.use((config) => {
-    const accessToken = localStorage.getItem("accessToken")
+/** 토큰 갱신 중 대기 중인 요청들을 처리하는 큐 */
+let isRefreshing = false
+let failedQueue: Array<{
+    resolve: (token: string) => void
+    reject: (error: unknown) => void
+}> = []
 
-    if (accessToken && !config.url?.includes("/auth/login") && !config.url?.includes("/auth/refresh")) {
-        config.headers.Authorization = `Bearer ${accessToken}`
+const processQueue = (error: unknown, token: string | null) => {
+    failedQueue.forEach(({ resolve, reject }) => {
+        if (token) resolve(token)
+        else reject(error)
+    })
+    failedQueue = []
+}
+
+const clearAuthAndRedirect = () => {
+    localStorage.removeItem("accessToken")
+    localStorage.removeItem("refreshToken")
+    localStorage.removeItem("user")
+
+    const authPaths = ["/login", "/signup"]
+    const isAuthPage = authPaths.some((path) => window.location.pathname.startsWith(path))
+    if (!isAuthPage) {
+        window.location.href = "/login"
     }
+}
 
-    return config
-})
-
-/**
- * @param config - Axios 요청 설정 옵션
- * @description Request 인터셉터
- * @returns {Promise<InternalAxiosRequestConfig>} 인터셉터 처리 후 요청 설정 옵션
- */
+/** 요청 인터셉터 - 토큰 자동 주입 */
 apiInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
+        const token = localStorage.getItem("accessToken")
+        const isAuthEndpoint =
+            config.url?.includes("/auth/login") ||
+            config.url?.includes("/auth/register") ||
+            config.url?.includes("/auth/refresh")
+
+        if (token && !isAuthEndpoint) {
+            config.headers.Authorization = `Bearer ${token}`
+        }
+
         return config
     },
-    (error) => {
-        return Promise.reject(error)
-    }
+    (error) => Promise.reject(error)
 )
-/**
- * @param response - Axios 응답
- * @description Response 인터셉터
- */
+
+/** 응답 인터셉터 - 401 시 refresh 후 재시도 */
 apiInstance.interceptors.response.use(
     (response) => response,
-    (error) => {
-        return Promise.reject(error)
+    async (error) => {
+        const originalRequest = error.config as RetryAxiosRequestConfig
+
+        // refresh 요청 자체가 401이면 즉시 로그아웃
+        if (originalRequest.url?.includes("/auth/refresh")) {
+            clearAuthAndRedirect()
+            return Promise.reject(error)
+        }
+
+        if (error.response?.status !== 401 || originalRequest._retry) {
+            return Promise.reject(error)
+        }
+
+        // 이미 refresh 중이면 큐에 적재 후 대기
+        if (isRefreshing) {
+            return new Promise<string>((resolve, reject) => {
+                failedQueue.push({ resolve, reject })
+            })
+                .then((token) => {
+                    originalRequest.headers.Authorization = `Bearer ${token}`
+                    return apiInstance(originalRequest)
+                })
+                .catch((err) => Promise.reject(err))
+        }
+
+        originalRequest._retry = true
+        isRefreshing = true
+
+        const refreshToken = localStorage.getItem("refreshToken")
+        if (!refreshToken) {
+            clearAuthAndRedirect()
+            return Promise.reject(error)
+        }
+
+        try {
+            const { data } = await apiInstance.post<{
+                access_token: string
+                refresh_token: string
+            }>("/auth/refresh", { refresh_token: refreshToken })
+
+            localStorage.setItem("accessToken", data.access_token)
+            localStorage.setItem("refreshToken", data.refresh_token)
+
+            apiInstance.defaults.headers.common.Authorization = `Bearer ${data.access_token}`
+            originalRequest.headers.Authorization = `Bearer ${data.access_token}`
+
+            processQueue(null, data.access_token)
+            return apiInstance(originalRequest)
+        } catch (refreshError) {
+            processQueue(refreshError, null)
+            clearAuthAndRedirect()
+            return Promise.reject(refreshError)
+        } finally {
+            isRefreshing = false
+        }
     }
 )
 
-/**
- * @description API 요청 헬퍼 클래스
- */
 export const ApiHelper = {
-    /**
-     * GET 요청
-     * @template T - 응답 데이터의 타입
-     * @param {string} url - 요청할 URL 경로
-     * @param {import('axios').AxiosRequestConfig} [config] - Axios 요청 설정 옵션
-     * @returns {Promise<T>} 응답 데이터를 반환하는 Promise
-     * @throws {Error} 네트워크 오류 또는 HTTP 오류 발생 시 예외 처리
-     */
     get: async <T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> => {
         const response: AxiosResponse<T> = await apiInstance.get(url, config)
         return response.data
     },
 
-    /**
-     * POST 요청
-     * @template T - 응답 데이터의 타입
-     * @param {string} url - 요청할 URL 경로
-     * @param {unknown} [data] - 요청 본문에 포함할 데이터
-     * @param {import('axios').AxiosRequestConfig} [config] - Axios 요청 설정 옵션
-     * @returns {Promise<T>} 응답 데이터를 반환하는 Promise
-     * @throws {Error} 네트워크 오류 또는 HTTP 오류 발생 시 예외 처리
-     */
     post: async <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> => {
         const response: AxiosResponse<T> = await apiInstance.post(url, data, config)
         return response.data
     },
 
-    /**
-     * DELETE 요청
-     * @template T - 응답 데이터의 타입
-     * @param {string} url - 요청할 URL 경로
-     * @param {import('axios').AxiosRequestConfig} [config] - Axios 요청 설정 옵션
-     * @returns {Promise<T>} 응답 데이터를 반환하는 Promise
-     * @throws {Error} 네트워크 오류 또는 HTTP 오류 발생 시 예외 처리
-     */
-    delete: async <T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> => {
-        const response: AxiosResponse<T> = await apiInstance.delete(url, config)
-        return response.data
-    },
-
-    /**
-     * PATCH 요청
-     * @template T - 응답 데이터의 타입
-     * @param {string} url - 요청할 URL 경로
-     * @param {unknown} [data] - 요청 본문에 포함할 데이터
-     * @param {import('axios').AxiosRequestConfig} [config] - Axios 요청 설정 옵션
-     * @returns {Promise<T>} 응답 데이터를 반환하는 Promise
-     * @throws {Error} 네트워크 오류 또는 HTTP 오류 발생 시 예외 처리
-     */
     patch: async <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> => {
         const response: AxiosResponse<T> = await apiInstance.patch(url, data, config)
         return response.data
     },
 
-    /**
-     * PUT 요청
-     * @template T - 응답 데이터의 타입
-     * @param {string} url - 요청할 URL 경로
-     * @param {unknown} [data] - 요청 본문에 포함할 데이터
-     * @param {import('axios').AxiosRequestConfig} [config] - Axios 요청 설정 옵션
-     * @returns {Promise<T>} 응답 데이터를 반환하는 Promise
-     * @throws {Error} 네트워크 오류 또는 HTTP 오류 발생 시 예외 처리
-     */
     put: async <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> => {
         const response: AxiosResponse<T> = await apiInstance.put(url, data, config)
+        return response.data
+    },
+
+    delete: async <T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> => {
+        const response: AxiosResponse<T> = await apiInstance.delete(url, config)
+        return response.data
+    },
+
+    postForm: async <T = unknown>(url: string, data: FormData): Promise<T> => {
+        const response: AxiosResponse<T> = await apiInstance.post(url, data, {
+            headers: { "Content-Type": "multipart/form-data" },
+        })
+        return response.data
+    },
+
+    patchForm: async <T = unknown>(url: string, data: FormData): Promise<T> => {
+        const response: AxiosResponse<T> = await apiInstance.patch(url, data, {
+            headers: { "Content-Type": "multipart/form-data" },
+        })
         return response.data
     },
 }
