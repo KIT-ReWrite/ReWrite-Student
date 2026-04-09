@@ -1,51 +1,65 @@
-import { useMutation } from "@tanstack/react-query"
-import type { ILoginRequest, ISignupRequest } from "@/entities/auth/api/auth.api.type"
-import { authApi } from "@/entities/auth/api/auth.api"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "react-toastify"
+import { authApi, userApi } from "@/entities/auth/api/auth.api"
+import type { IStudentSignupRequest, ILoginRequest, IUpdateUserRequest } from "@/entities/auth/api/auth.api.type"
 
-/** 회원가입 뮤테이션 */
-export const useSignupMutation = () => {
-    return useMutation({
-        mutationFn: (params: ISignupRequest) => authApi.signup(params),
-
-        onSuccess: () => {
-            toast.success("회원가입 성공")
-        },
-
-        onError: (error: any) => {
-            const message = error?.response?.data?.message ?? "회원가입에 실패했습니다"
-            toast.error(message)
-        },
-    })
+export const AUTH_KEYS = {
+    me: ["me"] as const,
 }
 
-/** 로그인 뮤테이션 */
-export const useLoginMutation = () => {
-    return useMutation({
+/** 학생 회원가입 */
+export const useStudentSignupMutation = () =>
+    useMutation({
+        mutationFn: (params: IStudentSignupRequest) => authApi.studentSignup(params),
+        onSuccess: () => toast.success("회원가입이 완료되었습니다."),
+        onError: (error: any) => toast.error(error?.response?.data?.message ?? "회원가입에 실패했습니다."),
+    })
+
+/** 로그인 */
+export const useLoginMutation = () =>
+    useMutation({
         mutationFn: (params: ILoginRequest) => authApi.login(params),
+        onError: (error: any) => toast.error(error?.response?.data?.message ?? "로그인에 실패했습니다."),
+    })
 
-        onSuccess: () => {
-            toast.success("로그인 성공")
-        },
+/** 로그아웃 */
+export const useLogoutMutation = () =>
+    useMutation({
+        mutationFn: () => authApi.logout(),
+        onSuccess: () => toast.success("로그아웃 되었습니다."),
+        onError: () => toast.error("로그아웃에 실패했습니다."),
+    })
 
-        onError: (error: any) => {
-            const message = error?.response?.data?.message ?? "로그인에 실패했습니다"
-            toast.error(message)
+/** 내 정보 조회 */
+export const useMeQuery = () =>
+    useQuery({
+        queryKey: AUTH_KEYS.me,
+        queryFn: () => userApi.getMe(),
+        staleTime: 1000 * 60 * 5,
+    })
+
+/** 내 정보 수정 */
+export const useUpdateMeMutation = () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: (params: IUpdateUserRequest) => userApi.updateMe(params),
+        onSuccess: (data) => {
+            queryClient.setQueryData(AUTH_KEYS.me, data)
+            toast.success("정보가 수정되었습니다.")
         },
+        onError: (error: any) => toast.error(error?.response?.data?.message ?? "수정에 실패했습니다."),
     })
 }
 
-/** 로그아웃 뮤테이션 */
-export const useLogoutMutation = () => {
+/** 프로필 이미지 변경 */
+export const useUpdateProfileImageMutation = () => {
+    const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: () => authApi.logout(),
-
+        mutationFn: (file: File) => userApi.updateProfileImage(file),
         onSuccess: () => {
-            toast.success("로그아웃 되었습니다")
+            queryClient.invalidateQueries({ queryKey: AUTH_KEYS.me })
+            toast.success("프로필 이미지가 변경되었습니다.")
         },
-
-        onError: () => {
-            toast.error("로그아웃에 실패했습니다")
-        },
+        onError: (error: any) => toast.error(error?.response?.data?.message ?? "이미지 변경에 실패했습니다."),
     })
 }
