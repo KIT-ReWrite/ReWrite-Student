@@ -2,8 +2,9 @@ import { Card } from "@/shared/ui/Card"
 import { motion } from "framer-motion"
 import { Users, BookOpen } from "lucide-react"
 import { useNavigate } from "react-router"
+import type { IClass } from "@/entities/classes/api/classes.api.type"
 
-export function ClassCard({ cls, index }: any) {
+export function ClassCard({ cls, index }: { cls: IClass; index: number }) {
     const navigate = useNavigate()
 
     return (
@@ -15,16 +16,17 @@ export function ClassCard({ cls, index }: any) {
 
                 <div className="p-5 flex-1 flex flex-col justify-between">
                     <div className="space-y-3 mb-4">
-                        <div className="flex items-center gap-2 text-text-secondary text-sm">
-                            <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs text-gray-600 font-medium">
-                                {cls.teacher_name.charAt(0)}
+                        {cls.teacher && (
+                            <div className="flex items-center gap-2 text-text-secondary text-sm">
+                                <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs text-gray-600 font-medium">
+                                    {cls.teacher.name.charAt(0)}
+                                </div>
+                                {cls.teacher.name} 선생님
                             </div>
-                            {cls.teacher_name} 선생님
-                        </div>
-
+                        )}
                         <div className="flex items-center gap-2 text-text-secondary text-sm">
                             <Users size={16} />
-                            학생 {cls.student_count}명
+                            학생 {cls.student_count ?? "0"}명
                         </div>
                     </div>
 

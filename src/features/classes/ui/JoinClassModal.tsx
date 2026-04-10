@@ -1,15 +1,22 @@
+import { useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { X } from "lucide-react"
-import { useState } from "react"
+import { useJoinClassMutation } from "@/entities/classes/queries/classes.queries"
 
-export function JoinClassModal({ isOpen, onClose }: any) {
+export function JoinClassModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const [inviteCode, setInviteCode] = useState("")
+    const { mutate: joinClass, isPending } = useJoinClassMutation()
 
     const handleJoinClass = (e: React.FormEvent) => {
         e.preventDefault()
-        alert(`초대 코드 ${inviteCode}로 학급에 참가했습니다.`)
-        onClose()
-        setInviteCode("")
+        if (!inviteCode.trim()) return
+
+        joinClass(inviteCode, {
+            onSuccess: () => {
+                setInviteCode("")
+                onClose()
+            },
+        })
     }
 
     if (!isOpen) return null
@@ -25,7 +32,7 @@ export function JoinClassModal({ isOpen, onClose }: any) {
                 >
                     <div className="flex justify-between items-center p-5 border-b border-gray-100">
                         <h3 className="text-lg font-bold">학급 참가하기</h3>
-                        <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                        <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
                             <X size={20} />
                         </button>
                     </div>
@@ -37,26 +44,29 @@ export function JoinClassModal({ isOpen, onClose }: any) {
 
                         <input
                             type="text"
+                            placeholder="초대 코드 입력"
                             className="notion-input text-center text-lg tracking-widest uppercase mb-6"
                             value={inviteCode}
                             onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                            maxLength={6}
+                            autoFocus
+                            required
                         />
 
                         <div className="flex gap-3">
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="flex-1 py-2.5 rounded-xl border border-gray-200 text-text-secondary"
+                                className="flex-1 py-2.5 rounded-xl border border-gray-200 text-text-secondary hover:bg-gray-50 transition-colors"
                             >
                                 취소
                             </button>
-
                             <button
                                 type="submit"
-                                disabled={inviteCode.length < 4}
-                                className="flex-1 py-2.5 rounded-xl bg-primary text-white"
+                                disabled={inviteCode.length < 6 || isPending}
+                                className="flex-1 py-2.5 rounded-xl bg-primary text-white hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                참가하기
+                                {isPending ? "참가 중..." : "참가하기"}
                             </button>
                         </div>
                     </form>
