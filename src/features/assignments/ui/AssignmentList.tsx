@@ -1,7 +1,14 @@
 import { motion } from "framer-motion"
 import { AssignmentItem } from "./AssignmentItem"
+import type { IAssignment } from "@/entities/assignments/api/assignments.api.type"
 
-export function AssignmentList({ assignments, onClick }: any) {
+export function AssignmentList({
+    assignments,
+    onClick,
+}: {
+    assignments: IAssignment[]
+    onClick: (id: number) => void
+}) {
     if (assignments.length === 0) {
         return (
             <div className="text-center py-20 text-text-secondary bg-white rounded-2xl border border-dashed border-gray-200">
@@ -12,7 +19,7 @@ export function AssignmentList({ assignments, onClick }: any) {
 
     return (
         <div className="space-y-4">
-            {assignments.map((assignment: any, index: number) => (
+            {assignments.map((assignment, index) => (
                 <motion.div
                     key={assignment.id}
                     initial={{ opacity: 0, y: 10 }}
