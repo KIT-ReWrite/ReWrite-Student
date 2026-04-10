@@ -23,6 +23,9 @@ export const submissionsApi = {
         return ApiHelper.patchForm<ISubmission>(API_PATH.SUBMISSIONS.UPDATE(submissionId), formData)
     },
 
+    deleteSubmissionImage: async (imageId: number) =>
+        ApiHelper.delete<{ message: string }>(API_PATH.SUBMISSIONS.DELETE_IMAGE(imageId)),
+
     /** AI 피드백 조회 */
     getAIFeedback: async (submissionId: number) =>
         ApiHelper.get<ISubmission["ai_feedback"]>(API_PATH.SUBMISSIONS.AI_FEEDBACK(submissionId)),

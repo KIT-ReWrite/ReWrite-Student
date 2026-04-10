@@ -1,3 +1,5 @@
+import type { ISubmissionImage } from "@/entities/submissions/api/submissions.api.type"
+
 export interface IAssignment {
     id: number
     class_id: number
@@ -26,5 +28,5 @@ export interface IMySubmission {
     text_content: string
     status: "not_submitted" | "submitted" | "ai_done" | "graded"
     submitted_at: string | null
-    images: { id: number; image_url: string }[]
+    images: ISubmissionImage[] // ← 이렇게 변경
 }

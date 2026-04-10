@@ -39,3 +39,16 @@ export const useUpdateSubmissionMutation = (submissionId: number) => {
         onError: (error: any) => toast.error(error?.response?.data?.message ?? "수정에 실패했습니다."),
     })
 }
+
+// ✅ 이미지 삭제 추가
+export const useDeleteSubmissionImageMutation = (submissionId: number) => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: (imageId: number) => submissionsApi.deleteSubmissionImage(imageId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: SUBMISSION_KEYS.detail(submissionId) })
+            queryClient.invalidateQueries({ queryKey: ["assignments"] })
+        },
+        onError: (error: any) => toast.error(error?.response?.data?.message ?? "이미지 삭제에 실패했습니다."),
+    })
+}

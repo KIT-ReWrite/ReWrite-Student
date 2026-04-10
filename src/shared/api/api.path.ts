@@ -26,6 +26,7 @@ export const API_PATH = {
         UPDATE: (id: number) => `/submissions/${id}`,
         AI_FEEDBACK: (id: number) => `/submissions/${id}/ai-feedback`,
         TEACHER_FEEDBACK: (id: number) => `/submissions/${id}/teacher-feedback`,
+        DELETE_IMAGE: (imageId: number) => `/submission-images/${imageId}`,
     },
     STUDENTS: {
         METRICS: (studentId: string) => `/students/${studentId}/metrics`,
