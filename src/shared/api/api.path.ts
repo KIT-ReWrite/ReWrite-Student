@@ -7,6 +7,7 @@ export const API_PATH = {
     USER: {
         ME: "/users/me",
         PROFILE_IMAGE: "/users/me/profile-image",
+        BY_ID: (id: string) => `/users/${id}`,
     },
     ASSIGNMENTS: {
         LIST: "/assignments",

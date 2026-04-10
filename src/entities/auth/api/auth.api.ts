@@ -18,16 +18,12 @@ export const authApi = {
 }
 
 export const userApi = {
-    /** 내 정보 조회 */
     getMe: async () => ApiHelper.get<IUserResponse>(API_PATH.USER.ME),
-
-    /** 내 정보 수정 */
     updateMe: async (body: IUpdateUserRequest) => ApiHelper.patch<IUserResponse>(API_PATH.USER.ME, body),
-
-    /** 프로필 이미지 변경 */
     updateProfileImage: async (file: File) => {
         const formData = new FormData()
         formData.append("image", file)
         return ApiHelper.patchForm<{ image_url: string }>(API_PATH.USER.PROFILE_IMAGE, formData)
     },
+    getUserById: async (id: string) => ApiHelper.get<IUserResponse>(API_PATH.USER.BY_ID(id)),
 }

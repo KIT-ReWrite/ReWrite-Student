@@ -63,3 +63,12 @@ export const useUpdateProfileImageMutation = () => {
         onError: (error: any) => toast.error(error?.response?.data?.message ?? "이미지 변경에 실패했습니다."),
     })
 }
+
+/** 특정 유저 조회 */
+export const useUserByIdQuery = (userId: string) =>
+    useQuery({
+        queryKey: ["users", userId] as const,
+        queryFn: () => userApi.getUserById(userId),
+        enabled: !!userId,
+        staleTime: 1000 * 60 * 10,
+    })
