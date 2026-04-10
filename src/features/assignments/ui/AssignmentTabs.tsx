@@ -18,7 +18,7 @@ export function AssignmentTabs({ tabs, activeTab, setActiveTab }: Props) {
                 <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex-1 py-2 px-3 text-sm font-medium rounded-lg transition-all relative
+                    className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all relative
               ${activeTab === tab.id ? "text-primary" : "text-text-secondary hover:text-text-primary"}`}
                 >
                     {activeTab === tab.id && (
@@ -28,7 +28,7 @@ export function AssignmentTabs({ tabs, activeTab, setActiveTab }: Props) {
                             initial={false}
                             transition={{
                                 type: "spring",
-                                stiffness: 500,
+                                stiffness: 400,
                                 damping: 30,
                             }}
                         />
