@@ -9,14 +9,20 @@ function AssignmentsPage() {
     const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState("all")
 
-    const status = activeTab === "all" ? undefined : activeTab
+    const isSubmittedTab = activeTab === "submitted"
+
+    const status = activeTab === "all" || isSubmittedTab ? undefined : activeTab
+
     const { data: assignments = [], isLoading } = useAssignmentsQuery(status)
+
+    const filteredAssignments = isSubmittedTab
+        ? assignments.filter((a) => a.my_status === "submitted" || a.my_status === "ai_done")
+        : assignments
 
     const tabs = [
         { id: "all", label: "전체" },
         { id: "not_submitted", label: "미제출" },
         { id: "submitted", label: "제출완료" },
-        { id: "ai_done", label: "AI분석완료" },
         { id: "graded", label: "채점완료" },
     ]
 
@@ -31,7 +37,10 @@ function AssignmentsPage() {
                     ))}
                 </div>
             ) : (
-                <AssignmentList assignments={assignments} onClick={(id: number) => navigate(`/assignments/${id}`)} />
+                <AssignmentList
+                    assignments={filteredAssignments}
+                    onClick={(id: number) => navigate(`/assignments/${id}`)}
+                />
             )}
         </PageLayout>
     )
