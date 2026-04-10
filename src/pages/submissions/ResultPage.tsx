@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { PageLayout } from "@/shared/ui/PageLayout"
-import { mockSubmissions, mockAssignments } from "@/shared/model/mockData"
+import { useSubmissionDetailQuery } from "@/entities/submissions/queries/submissions.queries"
 import { AISummaryCard } from "@/features/submissions/ui/result/AISummaryCard"
 import { SubmissionContentCard } from "@/features/submissions/ui/result/SubmissionContentCard"
 import { SubmissionSuccess } from "@/features/submissions/ui/result/SubmissionSuccess"
@@ -8,11 +8,23 @@ import { SubmissionSuccess } from "@/features/submissions/ui/result/SubmissionSu
 function ResultPage() {
     const { id } = useParams()
     const navigate = useNavigate()
+    const submissionId = Number(id)
 
-    const submission = mockSubmissions.find((s) => s.id === Number(id))
-    const assignment = mockAssignments.find((a) => a.id === submission?.assignment_id)
+    const { data: submission, isLoading } = useSubmissionDetailQuery(submissionId)
 
-    if (!submission || !assignment) return null
+    if (isLoading) {
+        return (
+            <PageLayout>
+                <div className="max-w-3xl mx-auto space-y-4">
+                    <div className="h-24 bg-gray-100 animate-pulse rounded-2xl" />
+                    <div className="h-32 bg-gray-100 animate-pulse rounded-2xl" />
+                    <div className="h-48 bg-gray-100 animate-pulse rounded-2xl" />
+                </div>
+            </PageLayout>
+        )
+    }
+
+    if (!submission) return null
 
     return (
         <PageLayout>
@@ -21,10 +33,11 @@ function ResultPage() {
 
                 <AISummaryCard
                     summary={submission.ai_feedback?.summary}
+                    status={submission.status}
                     onClick={() => navigate(`/submissions/${id}/feedback`)}
                 />
 
-                <SubmissionContentCard content={submission.text_content} />
+                <SubmissionContentCard content={submission.text_content} images={submission.images} />
             </div>
         </PageLayout>
     )

@@ -1,7 +1,12 @@
 import { Card } from "@/shared/ui/Card"
 import { UserCheck } from "lucide-react"
+import type { ITeacherFeedback } from "@/entities/submissions/api/submissions.api.type"
 
-export function TeacherFeedbackCard({ teacherFeedback }: any) {
+interface Props {
+    teacherFeedback: ITeacherFeedback | null
+}
+
+export function TeacherFeedbackCard({ teacherFeedback }: Props) {
     return (
         <Card className="p-6 sm:p-8 border-t-4 border-t-secondary h-full flex flex-col">
             <div className="flex items-center justify-between mb-6">
@@ -11,8 +16,7 @@ export function TeacherFeedbackCard({ teacherFeedback }: any) {
                     </div>
                     <h2 className="text-xl font-bold text-text-primary">선생님 피드백</h2>
                 </div>
-
-                {teacherFeedback?.score && (
+                {teacherFeedback && (
                     <div className="text-2xl font-bold text-secondary">
                         {teacherFeedback.score}
                         <span className="text-sm text-text-secondary font-medium ml-1">/ 100</span>
@@ -22,11 +26,16 @@ export function TeacherFeedbackCard({ teacherFeedback }: any) {
 
             <div className="flex-1 flex flex-col">
                 {teacherFeedback ? (
-                    <div className="bg-gray-50 p-5 rounded-xl border border-gray-100 flex-1">
-                        <p className="text-text-primary leading-relaxed whitespace-pre-wrap">
-                            {teacherFeedback.feedback}
+                    <>
+                        <div className="bg-gray-50 p-5 rounded-xl border border-gray-100 flex-1">
+                            <p className="text-text-primary leading-relaxed whitespace-pre-wrap">
+                                {teacherFeedback.feedback}
+                            </p>
+                        </div>
+                        <p className="text-xs text-text-secondary mt-3 text-right">
+                            {new Date(teacherFeedback.created_at).toLocaleDateString("ko-KR")} 채점
                         </p>
-                    </div>
+                    </>
                 ) : (
                     <div className="flex-1 flex flex-col items-center justify-center text-text-secondary bg-gray-50 rounded-xl border border-dashed border-gray-200 p-8 text-center">
                         <UserCheck size={32} className="text-gray-300 mb-3" />
