@@ -3,8 +3,9 @@ import { StatusBadge } from "@/shared/ui/StatusBadge"
 import { motion } from "framer-motion"
 import { Calendar, ChevronRight } from "lucide-react"
 import { useNavigate } from "react-router"
+import type { IClassAssignment } from "@/entities/classes/api/classes.api.type"
 
-export function AssignmentItem({ assignment, index }: any) {
+export function AssignmentItem({ assignment, index }: { assignment: IClassAssignment; index: number }) {
     const navigate = useNavigate()
 
     return (
@@ -16,11 +17,9 @@ export function AssignmentItem({ assignment, index }: any) {
             >
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                        <StatusBadge status={assignment.status} />
+                        <StatusBadge status={assignment.my_status ?? "not_submitted"} />
                     </div>
-
                     <h3 className="text-lg font-bold text-text-primary mb-1">{assignment.title}</h3>
-
                     <p className="text-sm text-text-secondary line-clamp-1">{assignment.description}</p>
                 </div>
 
@@ -29,7 +28,6 @@ export function AssignmentItem({ assignment, index }: any) {
                         <Calendar size={16} />
                         {new Date(assignment.due_date).toLocaleDateString("ko-KR")}
                     </div>
-
                     <ChevronRight size={18} className="text-gray-400" />
                 </div>
             </Card>

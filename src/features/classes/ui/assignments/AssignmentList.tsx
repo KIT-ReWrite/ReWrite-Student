@@ -1,13 +1,13 @@
+import type { IClassAssignment } from "@/entities/classes/api/classes.api.type"
 import { AssignmentItem } from "./AssignmentItem"
 
-export function AssignmentList({ assignments }: any) {
+export function AssignmentList({ assignments }: { assignments: IClassAssignment[] }) {
     return (
         <div>
             <h2 className="text-lg font-bold text-text-primary mb-4">과제 목록</h2>
-
             <div className="space-y-4">
                 {assignments.length > 0 ? (
-                    assignments.map((assignment: any, index: number) => (
+                    assignments.map((assignment, index) => (
                         <AssignmentItem key={assignment.id} assignment={assignment} index={index} />
                     ))
                 ) : (
