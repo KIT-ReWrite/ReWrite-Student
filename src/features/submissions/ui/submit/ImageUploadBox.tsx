@@ -50,79 +50,78 @@ export function ImageUploadBox({ images, setImages, existingImages, onDeleteExis
         <div>
             <label className="block text-sm font-medium text-text-primary mb-2">첨부 이미지 (선택)</label>
 
-            {/* 기존 이미지 (수정 모드) */}
-            {existingImages && existingImages.length > 0 && (
-                <div className="mb-3">
-                    <p className="text-xs text-text-secondary mb-2">기존 이미지</p>
-                    <div className="flex gap-2 flex-wrap">
-                        {existingImages.map((img, index) => (
-                            <div key={img.id} className="relative group">
-                                <img
-                                    src={`${import.meta.env.VITE_API_BASE_URL}${img.image_url}`}
-                                    alt={`기존 이미지 ${index + 1}`}
-                                    className="w-20 h-20 object-cover rounded-lg border border-gray-200"
-                                />
-                                {/* 오버레이 버튼 */}
-                                <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
-                                    <button
-                                        type="button"
-                                        onClick={() => openViewer("existing", index)}
-                                        className="p-1 bg-white/20 hover:bg-white/40 rounded-full transition-colors"
-                                    >
-                                        <Eye size={14} className="text-white" />
-                                    </button>
-                                    {onDeleteExisting && (
+            <div className="flex">
+                {/* 기존 이미지 (수정 모드) */}
+                {existingImages && existingImages.length > 0 && (
+                    <div>
+                        <p className="text-xs text-text-secondary mb-2">기존 이미지</p>
+                        <div className="flex gap-2 flex-wrap">
+                            {existingImages.map((img, index) => (
+                                <div key={img.id} className="relative group">
+                                    <img
+                                        src={`${import.meta.env.VITE_API_BASE_URL}${img.image_url}`}
+                                        alt={`기존 이미지 ${index + 1}`}
+                                        className="w-20 h-20 object-cover rounded-lg border border-gray-200"
+                                    />
+                                    {/* 오버레이 버튼 */}
+                                    <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
                                         <button
                                             type="button"
-                                            onClick={() => onDeleteExisting(img.id)}
+                                            onClick={() => openViewer("existing", index)}
+                                            className="p-1 bg-white/20 hover:bg-white/40 rounded-full transition-colors"
+                                        >
+                                            <Eye size={14} className="text-white" />
+                                        </button>
+                                        {onDeleteExisting && (
+                                            <button
+                                                type="button"
+                                                onClick={() => onDeleteExisting(img.id)}
+                                                className="p-1 bg-accent/80 hover:bg-accent rounded-full transition-colors"
+                                            >
+                                                <X size={14} className="text-white" />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* 새 이미지 미리보기 */}
+                {images.length > 0 && (
+                    <div>
+                        <p className="text-xs text-text-secondary mb-2">새로 추가할 이미지</p>
+                        <div className="flex gap-2 flex-wrap">
+                            {images.map((file, index) => (
+                                <div key={index} className="relative group">
+                                    <img
+                                        src={URL.createObjectURL(file)}
+                                        alt={file.name}
+                                        className="w-20 h-20 object-cover rounded-lg border border-primary/30"
+                                    />
+                                    <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                                        <button
+                                            type="button"
+                                            onClick={() => openViewer("new", index)}
+                                            className="p-1 bg-white/20 hover:bg-white/40 rounded-full transition-colors"
+                                        >
+                                            <Eye size={14} className="text-white" />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => removeNew(index)}
                                             className="p-1 bg-accent/80 hover:bg-accent rounded-full transition-colors"
                                         >
                                             <X size={14} className="text-white" />
                                         </button>
-                                    )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
-            )}
-
-            {/* 새 이미지 미리보기 */}
-            {images.length > 0 && (
-                <div className="mt-3">
-                    <p className="text-xs text-text-secondary mb-2">새로 추가할 이미지</p>
-                    <div className="flex gap-2 flex-wrap">
-                        {images.map((file, index) => (
-                            <div key={index} className="relative group">
-                                <img
-                                    src={URL.createObjectURL(file)}
-                                    alt={file.name}
-                                    className="w-20 h-20 object-cover rounded-lg border border-primary/30"
-                                />
-                                <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
-                                    <button
-                                        type="button"
-                                        onClick={() => openViewer("new", index)}
-                                        className="p-1 bg-white/20 hover:bg-white/40 rounded-full transition-colors"
-                                    >
-                                        <Eye size={14} className="text-white" />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => removeNew(index)}
-                                        className="p-1 bg-accent/80 hover:bg-accent rounded-full transition-colors"
-                                    >
-                                        <X size={14} className="text-white" />
-                                    </button>
-                                </div>
-                                <p className="text-xs text-text-secondary mt-1 w-20 truncate text-center">
-                                    {file.name}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
+                )}
+            </div>
 
             {/* 업로드 박스 */}
             <div
