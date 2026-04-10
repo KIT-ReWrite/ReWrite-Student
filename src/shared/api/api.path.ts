@@ -8,17 +8,26 @@ export const API_PATH = {
         ME: "/users/me",
         PROFILE_IMAGE: "/users/me/profile-image",
     },
-    DASHBOARD: {
-        TEACHER: "/dashboard/teacher",
+    ASSIGNMENTS: {
+        LIST: "/assignments",
+        DETAIL: (id: number) => `/assignments/${id}`,
     },
     CLASSES: {
         LIST: "/classes",
         DETAIL: (id: number) => `/classes/${id}`,
-        STATS: (id: number) => `/classes/${id}/stats`,
+        JOIN: "/classes/join",
         ASSIGNMENTS: (id: number) => `/classes/${id}/assignments`,
     },
-    ASSIGNMENTS: {
-        LIST: "/assignments",
-        DETAIL: (id: number) => `/assignments/${id}`,
+    SUBMISSIONS: {
+        LIST: (assignmentId: number) => `/assignments/${assignmentId}/submissions`,
+        DETAIL: (id: number) => `/submissions/${id}`,
+        SUBMIT: (assignmentId: number) => `/assignments/${assignmentId}/submit`,
+        UPDATE: (id: number) => `/submissions/${id}`,
+        AI_FEEDBACK: (id: number) => `/submissions/${id}/ai-feedback`,
+        TEACHER_FEEDBACK: (id: number) => `/submissions/${id}/teacher-feedback`,
+    },
+    STUDENTS: {
+        METRICS: (studentId: string) => `/students/${studentId}/metrics`,
+        SCORES: (studentId: string) => `/students/${studentId}/scores`,
     },
 } as const
