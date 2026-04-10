@@ -1,17 +1,29 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { PageLayout } from "@/shared/ui/PageLayout"
-import { mockAssignments, mockSubmissions } from "@/shared/model/mockData"
 import { AssignmentContent } from "@/features/assignments/ui/detail/AssignmentContent"
 import { AssignmentHeader } from "@/features/assignments/ui/detail/AssignmentHeader"
 import { AssignmentSidebar } from "@/features/assignments/ui/detail/AssignmentSidebar"
 import { SubmissionCard } from "@/features/assignments/ui/detail/SubmissionCard"
+import { useAssignmentDetailQuery } from "@/entities/assignments/queries/assignments.queries"
 
 function AssignmentDetailPage() {
     const { id } = useParams()
     const navigate = useNavigate()
+    const assignmentId = Number(id)
 
-    const assignment = mockAssignments.find((a) => a.id === Number(id))
-    const submission = mockSubmissions.find((s) => s.assignment_id === Number(id))
+    const { data: assignment, isLoading } = useAssignmentDetailQuery(assignmentId)
+
+    if (isLoading) {
+        return (
+            <PageLayout>
+                <div className="space-y-6">
+                    <div className="h-6 w-32 bg-gray-100 animate-pulse rounded" />
+                    <div className="h-48 bg-gray-100 animate-pulse rounded-2xl" />
+                    <div className="h-32 bg-gray-100 animate-pulse rounded-2xl" />
+                </div>
+            </PageLayout>
+        )
+    }
 
     if (!assignment) {
         return (
@@ -21,8 +33,9 @@ function AssignmentDetailPage() {
         )
     }
 
-    const isSubmitted = assignment.status !== "not_submitted"
-    const hasFeedback = assignment.status === "feedback_ready" || assignment.status === "graded"
+    const mySubmission = assignment.my_submission
+    const isSubmitted = !!mySubmission && mySubmission.status !== "not_submitted"
+    const hasFeedback = mySubmission?.status === "ai_done" || mySubmission?.status === "graded"
 
     return (
         <PageLayout>
@@ -31,18 +44,17 @@ function AssignmentDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
                     <AssignmentContent assignment={assignment} />
-
-                    {isSubmitted && submission && <SubmissionCard submission={submission} />}
+                    {isSubmitted && mySubmission && <SubmissionCard submission={mySubmission} />}
                 </div>
 
                 <div className="space-y-6">
                     <AssignmentSidebar
                         assignment={assignment}
-                        submission={submission}
                         isSubmitted={isSubmitted}
                         hasFeedback={hasFeedback}
                         onSubmit={() => navigate(`/assignments/${id}/submit`)}
-                        onFeedback={() => navigate(`/submissions/${submission?.id}/feedback`)}
+                        onFeedback={() => navigate(`/submissions/${mySubmission?.id}/feedback`)}
+                        onEditSubmit={() => navigate(`/assignments/${id}/submit`)}
                     />
                 </div>
             </div>
