@@ -10,7 +10,7 @@ import SignupPage from "@/pages/signup/SignupPage"
 import FeedbackPage from "@/pages/submissions/FeedbackPage"
 import ResultPage from "@/pages/submissions/ResultPage"
 import SubmitPage from "@/pages/submissions/SubmitPage"
-// import AuthGuard from "@/shared/lib/AuthGuard"
+import AuthGuard from "@/shared/lib/AuthGuard"
 import RootRedirect from "@/shared/lib/RootRedirect"
 import { createBrowserRouter } from "react-router"
 
@@ -31,7 +31,7 @@ export const router = createBrowserRouter(
                     element: <SignupPage />,
                 },
                 {
-                    // element: <AuthGuard />,
+                    element: <AuthGuard />,
                     children: [
                         {
                             path: "/dashboard",
