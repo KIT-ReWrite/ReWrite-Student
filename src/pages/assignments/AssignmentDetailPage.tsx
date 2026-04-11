@@ -13,6 +13,10 @@ function AssignmentDetailPage() {
 
     const { data: assignment, isLoading } = useAssignmentDetailQuery(assignmentId)
 
+    // ✅ submitted 상태일 때만 폴링 활성화
+    const myStatus = assignment?.my_submission?.status
+    useAssignmentDetailQuery(assignmentId, myStatus === "submitted")
+
     if (isLoading) {
         return (
             <PageLayout>
@@ -25,13 +29,7 @@ function AssignmentDetailPage() {
         )
     }
 
-    if (!assignment) {
-        return (
-            <PageLayout>
-                <div className="p-8 text-center">과제를 찾을 수 없습니다.</div>
-            </PageLayout>
-        )
-    }
+    if (!assignment) return null
 
     const mySubmission = assignment.my_submission
     const isSubmitted = !!mySubmission && mySubmission.status !== "not_submitted"

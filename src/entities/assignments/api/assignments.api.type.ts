@@ -30,3 +30,16 @@ export interface IMySubmission {
     submitted_at: string | null
     images: ISubmissionImage[] // ← 이렇게 변경
 }
+
+export interface ICreateAssignmentRequest {
+    class_id: number
+    title: string
+    description: string
+    due_date: string
+}
+
+export interface IUpdateAssignmentRequest {
+    title?: string
+    description?: string
+    due_date?: string
+}
