@@ -2,11 +2,13 @@ import { useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { BookOpen, Home, Book, FileText, BarChart2, Users, Menu, X, LogOut } from "lucide-react"
 import { useLogoutMutation, useMeQuery } from "@/entities/auth/queries/auth.queries"
+import { useQueryClient } from "@tanstack/react-query"
 
 export function Navbar() {
     const location = useLocation()
     const navigate = useNavigate()
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+    const queryClient = useQueryClient()
 
     // ✅ localStorage 대신 서버에서 실시간으로 가져오기
     const { data: user } = useMeQuery()
@@ -30,6 +32,9 @@ export function Navbar() {
                 localStorage.removeItem("accessToken")
                 localStorage.removeItem("refreshToken")
                 localStorage.removeItem("user")
+
+                queryClient.clear()
+
                 navigate("/login")
             },
         })
